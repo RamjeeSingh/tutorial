@@ -1,16 +1,24 @@
-void MyFunc( void );
+// Online C++ compiler to run C++ program online
+#include <iostream>
+#include <string>
+#include <pthread.h>
+#include <unistd.h>
+#include "Thread.h"
 
-void *pFnBottom = (void *)MyFunc;
-void *pFnTop;
-unsigned int uiStackUsage;
+using namespace std;
 
-void MyFunc( void )
-{
-    __asm__ ( mov pFnTop, esp );
-    uiStackUsage = (unsigned int)(pFnTop - pFnBottom);
+void * work(void *arg) {
+    cout<<" \n Dummy Worker"<<endl;
+
+}
+
+void waitInf() {
+   while(true);
 }
 
 int main() {
-
-
+    Thread th("sample", NULL, work);
+    th.start();
+    waitInf(); 
+    return 0;
 }
