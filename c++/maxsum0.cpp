@@ -1,15 +1,14 @@
-#include <vector>
-#include <iostream>
 #include <bits/stdc++.h>
 
 using namespace std;
 
 class Solution {
-    int max = 0;    
+    
     vector<int> result;
 
     public:
-    int maxLen(vector<int>&A, int n)
+    int maxlen = 0;
+    int maxLenRec(vector<int>&A, int n)
     {           
 	return maxLenUtil(A, n, 0, 0, 0);
     }    
@@ -23,16 +22,14 @@ class Solution {
     int maxLenUtil(vector<int> &A, int n, int offset, int sum, int cnt) { 
 
         if (sum == 0 && cnt != 0) {
-            if (cnt > max) {
-                cout<<"\n\n Display result \n\n\n";   
-                display(result);
-                cout<<"\n\n Update cnt = "<< cnt <<endl;
-                max = cnt;
+            if (cnt > maxlen) {                
+                //display(result);                
+                maxlen = cnt;
             }            
         }    
 
         if( offset >= n) {        
-            return max;
+            return maxlen;
         }
         for(int i = offset; i < n ; i++) {
            // cout<< " \n Check sum with "<< A[i] << endl;
@@ -41,7 +38,26 @@ class Solution {
             maxLenUtil(A, n, i+1, sum + A[i], cnt + 1);
             result.pop_back();
         }
-        return max;
+        return maxlen;
+    }
+    int max(int a , int b) {
+        return a > b ? a: b;
+    }
+    int maxLenIter(vector<int>&A, int n)
+    {           
+        unordered_map<int, int> map;
+        int sum = 0;
+        int max_len = 0;
+        for(int i = 0; i < A.size(); i++) {
+            sum = sum + A[i]; 
+            if(map.find(sum) != map.end()) {
+             //   cout<< " \n found 0 sum " << i - map[sum]<< endl ;
+                max_len = max(i - map[sum], max_len);               
+            } else {
+                 map[sum] = i;
+            }
+        }
+        return max_len;
     }
 };
 
@@ -50,12 +66,29 @@ int main() {
     Solution s;
     clock_t start, end;
     vector<int> A = {15, -2, 2, -8, 1, 7, 10, 23};
+    int recresult ;
+    int iterresult;
+    double timetaken = 0.0;
+    int loopcnt = 100000;
 
     start = clock(); 
-    s.maxLen(A, A.size());
-    cout <<"\n Max sum 0 is = "<< s.maxLen(A, A.size())<< " \n\n";
-    end = clock(); 
-    cout<< "\n\n time taken  = " << (double)(end - start)/(CLOCKS_PER_SEC)<<setprecision(5);
+    for(int cnt = loopcnt; cnt > 0; cnt--) {
+        s.maxlen = 0;
+        recresult = s.maxLenRec(A, A.size());
+    }
+    end = clock();
+    timetaken = ((double)end - start	)/ CLOCKS_PER_SEC;    
+    cout <<"\n Max sum 0 is = "<< recresult << " \n\n";
+    cout<< "\n\n time taken  = " << timetaken <<setprecision(5)<< endl;
+
+    start = clock(); 
+    for(int cnt = loopcnt; cnt > 0; cnt--) {
+        iterresult = s.maxLenIter(A, A.size());
+    }
+    end = clock();
+    timetaken = ((double)end - start	)/ CLOCKS_PER_SEC;
+    cout <<"\n Max sum 0 is = "<< iterresult << " \n\n";
+    cout<< "\n\n time taken  = " << timetaken << setprecision(5)<< endl;
 
 }
 
